@@ -1,0 +1,11 @@
+alias count R0;
+alias val R1;
+count = 0;
+while(count<5) do
+  count = count+1;
+  val  = count*count;
+  val = val*count;
+  breakpoint;
+endwhile;
+
+  
