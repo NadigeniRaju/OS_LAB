@@ -1,0 +1,31 @@
+int main()
+{
+    decl
+     int a, b, result, temp;
+    enddecl
+
+    begin
+        breakpoint;
+        read(a);
+        read(b);
+        
+        result = -1;
+
+        if(a < b) then 
+            temp = a;
+            a = b;
+            b = temp;
+         endif;
+
+         while((a%b) != 0) do
+         
+            temp = a%b;
+            a = b;
+            b = temp;
+         endwhile;
+         result = b;
+
+         write(result);
+         return 0;
+    end
+}
