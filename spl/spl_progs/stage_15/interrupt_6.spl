@@ -11,7 +11,7 @@ userSP=SP;
 
 [process_table_entry + 13] = userSP;
 
-SP = [process_table_entry + 11]*512 + [process_table_entry + 12];
+SP = [process_table_entry + 11]*512 - 1;
 
 
 alias physicalPageNum R3;

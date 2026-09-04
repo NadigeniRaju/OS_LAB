@@ -7,7 +7,7 @@ loadi(66,8);
 loadi(22,35);
 loadi(23,36);
 
-loadi(2,15);[PROCESS_TABLE + 16*3 + 4] = TERMINATED;
+loadi(2,15);
 loadi(3,16);
 
 loadi(16,29);
@@ -21,6 +21,7 @@ loadi(70,12);
 
 PTBR = PAGE_TABLE_BASE + 20;
 PTLR = 10;
+
 [PTBR+0] = 63;
 [PTBR+1] = "0100";
 [PTBR+2] = 64;

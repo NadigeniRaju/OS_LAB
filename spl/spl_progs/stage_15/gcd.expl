@@ -1,7 +1,7 @@
 int main()
 {
     decl
-     int a, b, result, temp;
+     int a, b, temp;
     enddecl
 
     begin
@@ -9,23 +9,15 @@ int main()
         read(a);
         read(b);
         
-        result = -1;
 
-        if(a < b) then 
-            temp = a;
-            a = b;
-            b = temp;
-         endif;
-
-         while((a%b) != 0) do
+         while(b != 0) do
          
             temp = a%b;
             a = b;
             b = temp;
          endwhile;
-         result = b;
 
-         write(result);
+         write(a);
          return 0;
     end
 }
