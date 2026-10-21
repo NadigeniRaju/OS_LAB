@@ -5,6 +5,7 @@ alias currentPID R2;
 
 // Acquire Disk
 if(functionNum == 3) then
+	[SYSTEM_STATUS_TABLE + 7] = [SYSTEM_STATUS_TABLE + 7] + 1;
 	while([DISK_STATUS_TABLE + 0] == 1) do
 		[PROCESS_TABLE + currentPID*16 + 4] = WAIT_DISK;
 		multipush(R1, R2);
@@ -13,8 +14,6 @@ if(functionNum == 3) then
 	endwhile;
 	[DISK_STATUS_TABLE + 0] = 1;
 	[DISK_STATUS_TABLE + 4] = currentPID;
-
-	return;
 endif;
 
 
@@ -33,6 +32,59 @@ if(functionNum == 8) then
 	breakpoint;
 	return;
 endif;
+
+//Acquire Inode
+if(functionNum == 4) then
+	alias inodeIndex R2;
+	alias currPID R3;
+	  
+	alias procTab R4;
+	procTab = PROCESS_TABLE + currPID*16;
+
+	while([FILE_STATUS_TABLE + 4*inodeIndex] != -1) do
+		[procTab + 4] = WAIT_FILE;
+		[procTab + 5] = inodeIndex;
+		multipush(R1, R2, R3, R4);
+		call MOD_5;
+		multipop(R1, R2, R3, R4);
+	endwhile;
+	  
+	if([INODE_TABLE + inodeIndex*16 + 1] == -1) then
+		R0 = -1;
+		return;
+	endif;
+	  
+	[FILE_STATUS_TABLE + 4*inodeIndex] = currPID;
+	R0 = 0;
+	return;
+endif;
+
+//Release Inode
+if(functionNum == 5) then
+	alias inodeIndex R2;
+	alias currPID R3;
+
+	if( currPID != [FILE_STATUS_TABLE + 4*inodeIndex]) then
+		R0 = -1;
+		return;
+	endif;
+	  
+	[FILE_STATUS_TABLE + 4*inodeIndex] = -1;
+
+	alias i R4;
+	i = 1;
+	alias procTab R5;
+	while(i<16) do
+    procTab = PROCESS_TABLE + 16*i;
+		if([procTab + 4] == WAIT_FILE && [procTab + 5] == inodeIndex) then
+			[procTab + 4] = READY;
+			[procTab + 5] = -1;
+		endif;
+	endwhile;
+	R0 = 0;
+	return;
+endif;
+
 
 //Acquire Semaphore
 if(functionNum == 6) then

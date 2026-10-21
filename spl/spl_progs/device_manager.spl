@@ -2,12 +2,25 @@
 alias functionNum R1;
 alias currentPID R2;
 
-// Disk Store :
+// Disk Store
 if(functionNum == 1) then
-	R1 = 1;
+	alias pageNumber R3;
+	alias blockNumber R4;
+	multipush(R1, R2, R3, R4);
+	R1 = 3;
+	R2 = R2;
+	call MOD_0;
+	multipop(R1, R2, R3, R4);
+	[DISK_STATUS_TABLE + 1] = 1;
+	[DISK_STATUS_TABLE + 2] = pageNumber;
+	[DISK_STATUS_TABLE + 3] = blockNumber;
+	store(pageNumber, blockNumber);
+	[PROCESS_TABLE + currentPID*16 + 4] = WAIT_DISK;
+	call MOD_5;
+	return;
 endif;
 
-// Disk load :
+// Disk load
 if(functionNum == 2) then
 	alias pageNumber R3;
 	alias blockNumber R4;
@@ -28,7 +41,7 @@ if(functionNum == 2) then
 endif;
 
 
-// Terminal Write :
+// Terminal Write
 if(functionNum == 3) then
 	alias word R3;
 	multipush(R1, R2, R3);
