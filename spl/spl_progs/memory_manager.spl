@@ -1,6 +1,6 @@
 alias functionNumber R1;
 
-// get free page
+// Get Free Page
 if (functionNumber == 1) then
     // increment wait_mem_count
     [SYSTEM_STATUS_TABLE + 3] = [SYSTEM_STATUS_TABLE + 3] + 1;
@@ -13,12 +13,10 @@ if (functionNumber == 1) then
         multipop(R1);
     endwhile;
 
-    // decrement wait_mem_count
     [SYSTEM_STATUS_TABLE + 3] = [SYSTEM_STATUS_TABLE + 3] - 1;
     [SYSTEM_STATUS_TABLE + 2] = [SYSTEM_STATUS_TABLE + 2] - 1;
     
     alias memoryFreeIndex R2;
-    // since available pages for user processes are from 76 to 127
     memoryFreeIndex = 76;
 
     while (([MEMORY_FREE_LIST + memoryFreeIndex] > 0) && (memoryFreeIndex < 128)) do
@@ -31,15 +29,13 @@ if (functionNumber == 1) then
     return;
 endif;
 
-// release page number
+// Release Page Number
 if (functionNumber == 2) then
     alias pageNumber R2;
 
-    // decrement num of process using this page
     [MEMORY_FREE_LIST + pageNumber] = [MEMORY_FREE_LIST + pageNumber] - 1;
 
     if ([MEMORY_FREE_LIST + pageNumber] == 0) then
-        // increment memory free count
         [SYSTEM_STATUS_TABLE + 2] = [SYSTEM_STATUS_TABLE + 2] + 1;
     endif;
 
@@ -54,7 +50,7 @@ if (functionNumber == 2) then
     return;
 endif;
 
-// Get free block
+// Get Free Block
 if (functionNumber == 3) then
     alias i R2;
     i = DISK_FREE_AREA;
@@ -129,4 +125,22 @@ if (functionNumber == 5) then
     breakpoint;
     return;
 endif;
-    
+
+// Get Swap Block
+if (functionNumber == 6) then 
+    alias i R2;
+    i = DISK_SWAP_AREA;
+    while (i < DISK_SIZE) do
+        if ([DISK_FREE_LIST + i] == 0) then 
+            break;
+        endif;
+        i = i+1;
+    endwhile;
+    if (i == DISK_SIZE) then
+        R0 = -1;
+    else
+        [DISK_FREE_LIST + i] = 1;
+        R0 = i;
+    endif;
+    return;
+endif;
